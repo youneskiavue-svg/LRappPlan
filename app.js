@@ -1,7 +1,7 @@
 (()=>{'use strict';
 const M=LR_MAP,R=LR_RENDER,G=LR_GRAPH,T=LR_TRANSIT,S=LR_SEARCH,SELFTEST=new URLSearchParams(location.search).get('selftest')==='1',$=id=>document.getElementById(id),qsa=s=>[...document.querySelectorAll(s)],canvas=$('mapCanvas'),ctx=canvas.getContext('2d',{alpha:false});
 const state={cx:0,cz:1800,scale:.07,min:.035,max:3.2,drag:false,layers:{terrain:true,buildings:true,roads:true,poi:true,admin:false,labels:true,train:false,metro:false,tram:false,bus:false},style:'standard',selected:null,selectedLine:null,selectedKey:null,selectedGroup:null,routeMode:'transit',routeFrom:null,routeTo:null,route:[],routeStops:[],routeFocus:false,visibleLineKeys:new Set(Object.keys(T.lineInfo).filter(k=>!k.startsWith('BUS-')))};let W=0,H=0,DPR=1,drawPending=false,moved=false;
-const terrain=new Image;terrain.src='assets/terrain.webp';terrain.onload=redraw;
+const terrain=new Image;terrain.src='terrain.webp';terrain.onload=redraw;
 const lineColor={};Object.values(T.lineInfo).forEach(v=>{if(!lineColor[v.line])lineColor[v.line]=v.color||'#3478d4'});
 const poiGroups=R.pois,poiGroupMap=new Map(poiGroups.map(x=>[String(x[0]),x])),poiIdToGroup=new Map(Object.entries(R.poiIdMap||{})),stationMap=new Map(T.stations.map(x=>[String(x[0]),x])),busMap=new Map(T.busStops.map(x=>[String(x[0]),x])),addrMap=new Map(M.addresses.map(x=>[String(x[0]),x])),zoneMap=new Map(M.zones.map(x=>[String(x[0]),x]));
 const roadFeatures=R.roads,roadGroups=Array.from({length:6},()=>[]);roadFeatures.forEach((r,i)=>(roadGroups[r[0]]||roadGroups[3]).push(i));
