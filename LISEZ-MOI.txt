@@ -1,0 +1,55 @@
+LOS RICO PLANS — APPLICATION VOYAGEUR
+Version Voyageur 9.0 — 9 juillet 2026
+
+OUVERTURE
+1. Décompresser entièrement l’archive ZIP.
+2. Ouvrir le fichier index.html dans Safari, Chrome, Edge ou Firefox.
+3. Conserver les dossiers data et assets à côté de index.html.
+
+L’application fonctionne hors ligne et n’envoie aucune donnée sur Internet.
+
+NOUVEAUTÉS DE LA VERSION 9
+- Correction de la priorité des vitesses automobiles : une autoroute ou un axe rapide reste traité à 40–50 km/h même lorsqu’il traverse Los Rico.
+- Les bretelles d’échangeur sont désormais identifiées séparément et circulées entre 25 et 35 km/h selon l’heure.
+- La vitesse moyenne de 11,4 km/h est réservée à la voirie urbaine ordinaire de Los Rico.
+- Le calculateur peut maintenant sélectionner naturellement une autoroute lorsque le détour est réellement plus rapide.
+
+FONCTIONS INTRODUITES EN VERSION 8
+- Correction complète de la ligne Aéroport–Port : les fragments interrompus ont été remplacés par deux tracés continus, un dans chaque sens.
+- Correction également appliquée à la géométrie utilisée dans les résultats d’itinéraire, et pas seulement à l’affichage du calque Transports.
+- Les noms de rues, avenues, boulevards et routes épousent désormais le tracé réel de la voie, lettre par lettre, y compris dans les courbes.
+- Choix entre « Partir maintenant », « Départ » et « Arrivée » à une date et une heure précises.
+- En mode « Arrivée », le calcul recherche le départ le plus tardif permettant de respecter l’heure d’arrivée demandée.
+- L’heure d’arrivée fonctionne aussi pour la voiture, la marche et le vélo ; l’heure de départ est recalculée à partir du temps de parcours estimé.
+- Nouveau filtre des modes dans le calcul en transports : Train, Métro, Tram et Bus peuvent être activés ou exclus indépendamment.
+- Les itinéraires proposés respectent simultanément les horaires exacts, l’heure choisie et les modes autorisés.
+
+PARAMÈTRES AUTOMOBILES CONSERVÉS
+- Los Rico, voirie urbaine ordinaire hors boulevard périphérique : référence de 11,4 km/h.
+- Boulevard périphérique : 35 à 40 km/h selon l’heure.
+- Hors Los Rico, hors autoroutes et axes rapides : 15 à 20 km/h.
+- Autoroutes et axes rapides, y compris dans Los Rico : 40 à 50 km/h.
+- Bretelles d’accès et de sortie : 25 à 35 km/h.
+- Les ralentissements restent modulés selon le jour, l’heure, les carrefours et le type de voie.
+
+FONCTIONS CONSERVÉES
+- Calcul des transports à partir des courses et missions réellement programmées.
+- Attente réelle du prochain véhicule, correspondances, derniers départs et services après minuit.
+- Cheminements piétons recalés sur la voirie réelle.
+- Pour les bus, départ exact de la fiche horaire puis temps de passage ajustés selon la circulation estimée.
+- Pendant un itinéraire, la carte masque le réseau complet et ne conserve que le chemin retenu.
+- Mode « Explorer » pour afficher la carte seule.
+- Mode « Transports » avec filtres Train, Métro, Tram et Bus et sélection ligne par ligne.
+- Lignes partageant un corridor affichées côte à côte avec une largeur identique.
+
+DONNÉES PRINCIPALES
+- 18 435 segments de voirie.
+- 25 397 adresses et bâtiments.
+- 1 621 lieux d’intérêt.
+- 146 stations ferroviaires et 642 arrêts de bus.
+- 76 lignes de bus disposant de fiches horaires.
+- 21 lignes ferroviaires disposant de missions horaires.
+- 0 violation d’espacement ferroviaire dans le contrôle final.
+
+REMARQUE SUR LE TRAFIC
+Le SIG ne contient pas de capteurs de circulation en temps réel. Les bouchons sont une estimation cohérente et reproductible fondée sur le jour, l’heure, le type de voie, la localisation urbaine et les carrefours. Il ne s’agit pas d’une donnée de trafic en direct.

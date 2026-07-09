@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f5f5f7">
+  <meta name="color-scheme" content="light dark">
+  <title>Plans de Los Rico</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="mapCanvas" aria-label="Carte interactive de Los Rico"></canvas>
+
+  <div id="loadingScreen">
+    <div class="loaderMark">LR</div>
+    <strong>Ouverture de Plans</strong>
+    <small>Chargement du SIG, des lignes et des horaires</small>
+    <div class="loadingBar"><i></i></div>
+  </div>
+
+  <aside class="sidebar glass" id="mainSidebar">
+    <div class="sidebarTop">
+      <button class="brandButton" id="homeBtn" title="Vue générale" aria-label="Vue générale">LR</button>
+      <div class="brandCopy"><strong>Plans</strong><small>Los Rico</small></div>
+      <button class="topIcon" id="infoBtn" title="Contrôle du SIG" aria-label="Contrôle du SIG">i</button>
+    </div>
+
+    <div class="searchWrap">
+      <div class="searchBox">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+        <input id="globalSearch" autocomplete="off" placeholder="Rechercher dans Plans">
+        <button id="clearSearch" class="clearBtn" aria-label="Effacer">×</button>
+      </div>
+      <div id="searchResults" class="results hidden"></div>
+    </div>
+
+    <div id="homePanel" class="sidebarScroll">
+      <div class="quickActions">
+        <button id="routeBtn" class="quickAction"><span class="quickGlyph routeGlyph">↗</span><span>Itinéraire</span></button>
+        <button id="transportBtn" class="quickAction"><span class="quickGlyph">M</span><span>Transports</span></button>
+        <button id="nearbyBtn" class="quickAction"><span class="quickGlyph">◎</span><span>À proximité</span></button>
+      </div>
+
+      <section class="sidebarSection">
+        <h2>Explorer Los Rico</h2>
+        <div class="categoryGrid">
+          <button data-search-preset="gare"><span>Gares</span><small>Train et métro</small></button>
+          <button data-search-preset="hôpital"><span>Santé</span><small>Hôpitaux et cliniques</small></button>
+          <button data-search-preset="stade"><span>Sports</span><small>Stades et arénas</small></button>
+          <button data-search-preset="parc"><span>Parcs</span><small>Jardins et espaces verts</small></button>
+        </div>
+      </section>
+
+      <section class="sidebarSection networkOverview">
+        <div class="sectionHeader"><h2>Réseau voyageur</h2><button id="openNetwork">Afficher</button></div>
+        <div class="networkChips" id="networkChips"></div>
+        <p id="networkSummary">Métro, trains régionaux, tramways et bus de Los Rico Mobilités.</p>
+      </section>
+
+      <section class="sidebarSection dataCard" id="miniAudit">
+        <div class="sectionHeader"><h2>État des données</h2><span class="statusPill good">SIG chargé</span></div>
+        <div class="auditMiniGrid">
+          <div><strong id="auditLines">—</strong><span>lignes</span></div>
+          <div><strong id="auditStops">—</strong><span>points d’arrêt</span></div>
+          <div><strong id="auditPois">—</strong><span>lieux</span></div>
+        </div>
+      </section>
+    </div>
+
+    <section id="routePanel" class="sidePanel hidden">
+      <div class="panelHeader">
+        <button class="backBtn" id="closeRoute" aria-label="Retour">‹</button>
+        <div><div class="eyebrow">Plans de Los Rico</div><h1>Itinéraire</h1></div>
+      </div>
+      <div class="modeTabs">
+        <button data-mode="transit" class="active">Transports</button>
+        <button data-mode="drive">Voiture</button>
+        <button data-mode="walk">À pied</button>
+        <button data-mode="bike">Vélo</button>
+      </div>
+      <div class="routeInputs">
+        <div class="routeDots"><i></i><span></span><b></b></div>
+        <div class="routeFields">
+          <input id="fromInput" data-route-field="from" autocomplete="off" placeholder="Départ">
+          <input id="toInput" data-route-field="to" autocomplete="off" placeholder="Arrivée">
+        </div>
+        <button id="swapRoute" class="swapBtn" aria-label="Inverser">⇅</button>
+      </div>
+      <div id="routeSuggestions" class="routeSuggestions hidden"></div>
+      <div class="routeOptionsRow routeWhenRow">
+        <button id="routeTimeButton" class="routeTimeButton" type="button">
+          <span class="timeDot"></span><span><strong>Partir maintenant</strong><small id="routeTimeSummary">Selon l’heure actuelle</small></span><span class="chevron">⌄</span>
+        </button>
+        <button id="routeSettingsBtn" class="routePrefButton">Options</button>
+        <div id="routeTimePopover" class="routeTimePopover hidden">
+          <div class="timeChoiceTabs">
+            <button type="button" data-time-choice="now" class="active">Maintenant</button>
+            <button type="button" data-time-choice="departure">Départ</button>
+            <button type="button" data-time-choice="arrival">Arrivée</button>
+          </div>
+          <div id="customTimeFields" class="customTimeFields disabled">
+            <label><span>Date</span><input id="routeDate" type="date"></label>
+            <label><span>Heure</span><input id="routeTime" type="time" step="60"></label>
+          </div>
+          <div class="timePopoverNote">Choisis une heure de départ ou l’heure à laquelle tu souhaites arriver. Les fiches horaires exactes sont utilisées, y compris après minuit.</div>
+          <button id="applyRouteTime" type="button" class="primarySmall">Valider</button>
+        </div>
+        <div id="routeModesPopover" class="routeModesPopover hidden">
+          <div class="routeModesTitle"><strong>Modes autorisés</strong><small>Décoche un mode pour l’exclure du calcul.</small></div>
+          <div class="routeModeChoices">
+            <label><input type="checkbox" data-route-mode="train" checked><span class="modeFilterDot train"></span>Train</label>
+            <label><input type="checkbox" data-route-mode="metro" checked><span class="modeFilterDot metro"></span>Métro</label>
+            <label><input type="checkbox" data-route-mode="tram" checked><span class="modeFilterDot tram"></span>Tram</label>
+            <label><input type="checkbox" data-route-mode="bus" checked><span class="modeFilterDot bus"></span>Bus</label>
+          </div>
+          <div class="routeModesActions"><button id="allRouteModes" type="button">Tout sélectionner</button><button id="applyRouteModes" type="button" class="primarySmall">Valider</button></div>
+        </div>
+      </div>
+      <button id="calculateRoute" class="primaryBtn">Afficher l’itinéraire</button>
+      <div id="routeStatus" class="routeStatus"></div>
+      <div id="routeResults" class="routeResults"></div>
+    </section>
+
+    <section id="transportPanel" class="sidePanel hidden">
+      <div class="panelHeader">
+        <button class="backBtn" data-close="transportPanel" aria-label="Retour">‹</button>
+        <div><div class="eyebrow">Los Rico Mobilités</div><h1>Transports</h1></div>
+      </div>
+      <div class="transportViewNote"><strong>Vue Transports</strong><span>Choisis précisément les lignes visibles sur la carte.</span></div>
+      <div class="transportToggles">
+        <label><input type="checkbox" data-layer="train" checked><span class="dot train"></span>Train</label>
+        <label><input type="checkbox" data-layer="metro" checked><span class="dot metro"></span>Métro</label>
+        <label><input type="checkbox" data-layer="tram" checked><span class="dot tram"></span>Tram</label>
+        <label><input type="checkbox" data-layer="bus"><span class="dot bus"></span>Bus</label>
+      </div>
+      <div class="lineFilterBar">
+        <button id="showAllLines" type="button">Tout afficher</button>
+        <button id="hideAllLines" type="button">Tout masquer</button>
+      </div>
+      <input id="lineSearch" class="panelSearch" placeholder="Rechercher une ligne ou un terminus">
+      <div id="lineList" class="lineList"></div>
+    </section>
+
+    <section id="auditPanel" class="sidePanel hidden">
+      <div class="panelHeader">
+        <button class="backBtn" id="closeAudit" aria-label="Retour">‹</button>
+        <div><div class="eyebrow">Contrôle qualité</div><h1>État du SIG</h1></div>
+      </div>
+      <div id="auditContent" class="auditContent"></div>
+    </section>
+  </aside>
+
+  <section id="layersPanel" class="floatingPanel glass hidden">
+    <div class="floatingHeader"><div><div class="eyebrow">Affichage</div><h2>Type de carte</h2></div><button class="iconBtn" data-close="layersPanel">×</button></div>
+    <div class="styleSwitch mapModeSwitch"><button data-style="standard" class="active"><strong>Explorer</strong><small>Carte seule</small></button><button data-style="transport"><strong>Transports</strong><small>Réseau filtrable</small></button></div>
+    <div class="layerGrid">
+      <label><input type="checkbox" data-map-layer="buildings" checked>Bâtiments</label>
+      <label><input type="checkbox" data-map-layer="roads" checked>Voirie</label>
+      <label><input type="checkbox" data-map-layer="poi" checked>Lieux</label>
+      <label><input type="checkbox" data-map-layer="admin">Limites administratives</label>
+      <label><input type="checkbox" data-map-layer="labels" checked>Noms</label>
+      <label><input type="checkbox" data-map-layer="terrain" checked>Relief et eau</label>
+    </div>
+  </section>
+
+  <div class="rightControls">
+    <button id="layersBtn" class="mapControl glass" title="Type de carte" aria-label="Type de carte">
+      <svg viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 18l9 5 9-5"/></svg>
+    </button>
+    <button id="locateBtn" class="mapControl glass" title="Vue générale" aria-label="Vue générale">
+      <svg viewBox="0 0 24 24"><path d="M12 2v3m0 14v3M2 12h3m14 0h3m-5 0a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"/></svg>
+    </button>
+    <div class="zoomGroup glass"><button id="zoomIn" aria-label="Zoom avant">+</button><button id="zoomOut" aria-label="Zoom arrière">−</button></div>
+  </div>
+
+  <div id="detailCard" class="detailCard glass hidden">
+    <button class="cardClose" id="closeDetail" aria-label="Fermer">×</button>
+    <div id="detailIcon" class="detailIcon"></div>
+    <div class="detailBody">
+      <div id="detailType" class="eyebrow"></div>
+      <h2 id="detailTitle"></h2>
+      <p id="detailSubtitle"></p>
+      <div id="detailBadges" class="badges"></div>
+      <div id="departurePreview" class="departurePreview"></div>
+      <div class="detailActions"><button id="detailRoute" class="primarySmall">Itinéraire</button><button id="detailCenter" class="secondarySmall">Centrer</button></div>
+    </div>
+  </div>
+
+  <section id="lineInspector" class="lineInspector glass hidden">
+    <button class="cardClose" id="closeLineInspector" aria-label="Fermer">×</button>
+    <div id="lineInspectorContent"></div>
+  </section>
+
+  <div class="mapLegend glass"><span><i class="legendRoad"></i>Voirie</span><span><i class="legendTransit"></i>Transports</span><span id="zoomLabel"></span></div>
+  <div class="attribution">SIG local de Los Rico · Application hors ligne</div>
+  <div id="toast" class="toast hidden"></div>
+</div>
+<script src="data/map-data.js"></script>
+<script src="data/render-data.js"></script>
+<script src="data/road-graph.js"></script>
+<script src="data/transport-data.js"></script>
+<script src="data/search-data.js"></script>
+<script src="data/schedule-data.js"></script>
+<script src="app.js"></script>
+<script src="enhancements.js"></script>
+<script src="v5.js"></script>
+<script src="v7.js"></script>
+<script src="v8.js"></script>
+</body>
+</html>

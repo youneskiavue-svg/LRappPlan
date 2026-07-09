@@ -1,0 +1,22 @@
+LOS RICO PLANS — DÉPLOIEMENT GITHUB PAGES
+
+IMPORTANT : tous les fichiers de ce dossier doivent être placés directement à la racine du dépôt GitHub.
+La page principale doit apparaître ainsi dans le dépôt :
+
+/index.html
+/app.css
+/app.js
+/data/
+/assets/
+/.nojekyll
+
+Ne téléversez pas le fichier ZIP lui-même et ne placez pas les fichiers dans un sous-dossier.
+
+Réglage GitHub :
+1. Ouvrir le dépôt > Settings > Pages.
+2. Source : Deploy from a branch.
+3. Branche : main.
+4. Dossier : /(root).
+5. Save.
+
+L'adresse sera : https://VOTRE-PSEUDO.github.io/NOM-DU-DEPOT/
